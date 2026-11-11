@@ -1,0 +1,8 @@
+import { useState } from 'react'
+import { getProfile } from '../utils/storage'
+export default function Profile() {
+ const [profile,setProfile]=useState(getProfile),[saved,setSaved]=useState(false)
+ const update=e=>setProfile(p=>({...p,[e.target.name]:e.target.value}))
+ const submit=e=>{e.preventDefault();localStorage.setItem('vs_profile',JSON.stringify(profile));setSaved(true)}
+ return <div className="page-content"><div className="page-intro"><span className="eyebrow">YOUR ACCOUNT</span><h1>My profile</h1><p>Manage your personal information and learning identity.</p></div><div className="panel profile-panel"><div className="profile-cover"><div className="profile-avatar">AR</div></div><form className="profile-form" onSubmit={submit}><div className="profile-name"><h2>{profile.name}</h2><span className="status-pill">● Active student</span></div><div className="form-grid"><label>Full name<input name="name" value={profile.name} onChange={update}/></label><label>Email address<input type="email" name="email" value={profile.email} onChange={update}/></label><label>Phone number<input name="phone" value={profile.phone} onChange={update}/></label><label>City / Location<input name="city" value={profile.city} onChange={update}/></label><label className="full-field">About me<textarea name="bio" rows="3" value={profile.bio} onChange={update}/></label></div><div className="form-footer">{saved&&<span className="success-text">Profile saved successfully.</span>}<button className="btn btn-primary">Save changes</button></div></form></div></div>
+}

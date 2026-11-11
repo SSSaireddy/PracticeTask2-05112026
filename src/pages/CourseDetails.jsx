@@ -1,0 +1,14 @@
+import { Link, useParams } from 'react-router-dom'
+import { ArrowLeft, BookOpen, Clock3, PlayCircle, Star, Users } from 'lucide-react'
+export default function CourseDetails({ courses, enrolled, onEnroll, completed }) {
+  const { id } = useParams()
+  const course = courses.find(c=>c.id===id)
+  if (!course) return <div className="empty-state"><h2>Course not found</h2><Link to="/courses">Back to courses</Link></div>
+  const isEnrolled = enrolled.includes(id)
+  const progress = Math.round((completed[id]?.length || 0)/course.lessons.length*100)
+  return <div className="page-content"><Link to="/courses" className="back-link"><ArrowLeft size={16}/> Back to courses</Link>
+    <div className="detail-hero"><div><span className="eyebrow light">{course.category.toUpperCase()} COURSE</span><h1>{course.title}</h1><p>{course.description}</p><div className="detail-meta"><span><Star size={15} fill="currentColor"/> {course.rating} rating</span><span><Users size={15}/>{course.students} learners</span><span><Clock3 size={15}/>{course.duration}</span></div><div className="detail-instructor"><div className="avatar avatar-light">{course.instructor.split(' ').map(x=>x[0]).join('').slice(0,2)}</div><div><b>{course.instructor}</b><small>{course.role}</small></div></div></div><div className="detail-art">{course.icon}</div></div>
+    <div className="detail-columns"><section className="panel"><h2>Course curriculum</h2><p className="muted">A practical learning path with {course.lessons.length} lessons.</p>{course.lessons.map((lesson,i)=><div className="lesson-row" key={lesson}><div className="lesson-number">{completed[id]?.includes(i)?'✓':String(i+1).padStart(2,'0')}</div><div className="lesson-info"><b>{lesson}</b><small>Lesson {i+1} · Learning module</small></div><PlayCircle size={19} className="muted-icon"/></div>)}</section>
+    <aside className="panel enrol-panel"><div className="enrol-icon">🎯</div><h3>{isEnrolled?'Your course progress':'Ready to get started?'}</h3><p>{isEnrolled?'You are enrolled. Continue with your next lesson.':'Enrol now to access all lessons and the course quiz.'}</p>{isEnrolled?<><div className="progress-row"><span>Completed</span><b>{progress}%</b></div><div className="progress-track"><span style={{width:`${progress}%`}}/></div><Link to={`/lesson/${id}/0`} className="btn btn-primary btn-full">Start learning</Link></>:<button className="btn btn-primary btn-full" onClick={()=>onEnroll(id)}>Enrol in this course</button>}<div className="included"><b>What you'll get</b><span>✓ {course.lessons.length} structured lessons</span><span>✓ Practice quiz</span><span>✓ Track your progress</span></div></aside></div>
+  </div>
+}
